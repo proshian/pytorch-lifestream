@@ -1,10 +1,12 @@
 import warnings
+from typing import Dict, Optional
 
 import torch
 from ptls.data_load.padded_batch import PaddedBatch
 from ptls.nn.trx_encoder.batch_norm import RBatchNorm, RBatchNormWithLens
 from ptls.nn.trx_encoder.noisy_embedding import NoisyEmbedding
 from ptls.nn.trx_encoder.trx_encoder_base import TrxEncoderBase
+from ptls.nn.trx_encoder.encoders import BaseEncoder  # for type hinting
 
 
 class TrxEncoder(TrxEncoderBase):
@@ -34,6 +36,14 @@ class TrxEncoder(TrxEncoderBase):
 
             One field can have many scalers. In this case key become alias and col name should be in scaler.
             Check `TrxEncoderBase.numeric_values` for more details
+
+            Scaled `numeric_values` are concatenated to sequences of trainable  embeddings of categorical fearutes.
+
+        custom_embeddings:
+            A Dict where a key is a feature name and a value is an embedder. 
+            An embedder is an object of a class that must 
+            inherit from ptls.nn.trx_encoder.encoders.BaseEncoder 
+            and define output_size property.
 
         embeddings_noise (float):
             Noise level for embedding. `0` meens without noise
@@ -81,9 +91,9 @@ class TrxEncoder(TrxEncoderBase):
         >>> assert z.payload.shape == (5, 20, 6)  # B, T, H
     """
     def __init__(self,
-                 embeddings=None,
-                 numeric_values=None,
-                 custom_embeddings=None,
+                 embeddings: Optional[Dict[str, Dict[str, int]]] = None,
+                 numeric_values: Optional[Dict[str, str]] = None,
+                 custom_embeddings: Optional[Dict[str, BaseEncoder]] = None,
                  embeddings_noise: float = 0,
                  norm_embeddings=None,
                  use_batch_norm=True,
@@ -153,24 +163,42 @@ class TrxEncoder(TrxEncoderBase):
                 if n == 'linear_projection_head.weight':
                     torch.nn.init.orthogonal_(p.data)
 
+    def _get_custom_embeddings_tensor(self, x: PaddedBatch) -> torch.Tensor:
+        """
+        Get custom embeddings tensor that is a concatenation of all custom embeddings.
+        Optionally apply batch norm to the custom embeddings tensor.
+        """
+        processed_custom_embeddings = []
+        for field_name in self.custom_embeddings.keys():
+            # processed_custom_embeddings[i].shape = (B, T, H_embeder_i)
+            processed_custom_embeddings.append(self.get_custom_embeddings(x, field_name))
+        
+        if not processed_custom_embeddings:
+            return None
+
+        custom_embeddings_tensor = torch.cat(processed_custom_embeddings, dim=2)
+
+        if self.custom_embedding_batch_norm is not None:
+            custom_embeddings_tensor_pb = PaddedBatch(custom_embeddings_tensor, x.seq_lens)
+            custom_embeddings_tensor_pb = self.custom_embedding_batch_norm(custom_embeddings_tensor_pb)
+            custom_embeddings_tensor = custom_embeddings_tensor_pb.payload
+
+        # custom_embeddings_tensor.shape = (B, T, H_embeder_0 + H_embeder_1 + ... H_embeder_n)
+        return custom_embeddings_tensor
+            
+
     def forward(self, x: PaddedBatch):
         processed_embeddings = []
-        processed_custom_embeddings = []
 
         for field_name in self.embeddings.keys():
+            # processed_embeddings[i].shape = (B, T, H_embed_layer)
             processed_embeddings.append(self.get_category_embeddings(x, field_name))
         
-        for field_name in self.custom_embeddings.keys():
-            processed_custom_embeddings.append(self.get_custom_embeddings(x, field_name))
-
-        if len(processed_custom_embeddings):
-            processed_custom_embeddings = torch.cat(processed_custom_embeddings, dim=2)
-            if self.custom_embedding_batch_norm is not None:
-                processed_custom_embeddings = PaddedBatch(processed_custom_embeddings, x.seq_lens)
-                processed_custom_embeddings = self.custom_embedding_batch_norm(processed_custom_embeddings)
-                processed_custom_embeddings = processed_custom_embeddings.payload
-            processed_embeddings.append(processed_custom_embeddings)
-
+        custom_embeddings_tensor = self._get_custom_embeddings_tensor(x)
+        if custom_embeddings_tensor is not None:
+            # custom_embeddings_tensor.shape = (B, T, H_embeder_0 + H_embeder_1 + ... H_embeder_n)
+            processed_embeddings.append(custom_embeddings_tensor)
+        
         out = torch.cat(processed_embeddings, dim=2)
 
         if self.linear_projection_head is not None:

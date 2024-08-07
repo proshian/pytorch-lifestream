@@ -14,7 +14,7 @@ An event can only be linked to one user.
 - `event_time` - is timestamp, used for ordering events in sequence.
 It's possible extract date-time features from timestamp.
 If the timestamp is not available, you can use any data type that can define the order.
-- `feature fields` - describe a properties of events. Can be numerical, categorical or any type that can be converted to feature vector.
+- `feature fields` - describe properties of events. Can be numerical, categorical or any type that can be converted to feature vector.
 
 Credit card transaction history is a example of lifestream data.
 
@@ -30,7 +30,7 @@ Credit card transaction history is a example of lifestream data.
 
 In this example we can find two users (clients) with two sequences. First contains 4 events, second contains 3 events.
 We sort events by `date_time` for each user to assure correct event order.
-Each event (transaction) are described by categorical field `mcc_code`, numerical field `amount`, and time field `date_time`.
+Each event (transaction) is described by categorical field `mcc_code`, numerical field `amount`, and time field `date_time`.
 These fields allow to distinguish events, vectorize them na use as a features.
 
 `pytorch-lifeatream` supports this data format and provides the tools to process it through a pipeline.
@@ -42,8 +42,8 @@ Here are the steps:
 
 1. Feature field transformation: encoding categorical features, amount normalizing, missing values imputing.
 This works like sklearn fit-transform preprocessors.
-2. Splitting all events by `user_id` and sort events by `event_time`. 
-We transfer flat table with events to set of users with event collections.
+2. Splitting all events by `user_id` and sorting events by `event_time`. 
+We transfer flat table with events to a set of users with event collections.
 3. Split events by feature fields.
 Features are stored as 1d-arrays. Sequence orders are kept.
 

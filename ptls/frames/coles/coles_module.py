@@ -18,7 +18,7 @@ class CoLESModule(ABSModule):
 
     Parameters
         seq_encoder:
-            Model which calculate embeddings for original raw transaction sequences
+            Model which calculates embeddings for original raw transaction sequences
             `seq_encoder` is trained by `CoLESModule` to get better representations of input sequences
         head:
             Model which helps to train. Not used during inference

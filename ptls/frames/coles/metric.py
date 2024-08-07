@@ -89,6 +89,10 @@ def metric_recall_top_K(X, y, K, metric='cosine'):
             !!! 'euclidean' - to slow for datasets bigger than 100K rows
     """
     # TODO: take K from `y`
+
+    # Например:
+    #  _, counts = y.unique(return_counts=True)
+    # ...
     res = []
 
     n = X.size(0)
@@ -110,8 +114,10 @@ def metric_recall_top_K(X, y, K, metric='cosine'):
                 pdist = outer_pairwise_distance(X, X[id_left:id_right])
             else:
                 raise AttributeError(f'wrong metric "{metric}"')
-
+            # pdist.shape = n x batch_size
+            # pdist[i][j] is  similarity between X[i] and X_batch[j], where X_batch = X[id_left:id_right] 
             values, indices = pdist.topk(K + 1, 0, largest=False)
+            # topk is a matrix[k, batch_size] where i-th element is a vector of top k most similar to X[i] elements from X_batch
 
             y_rep = y_batch.repeat(K, 1)
             res.append((y[indices[1:]] == y_rep).sum().item())

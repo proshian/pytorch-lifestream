@@ -9,7 +9,7 @@ Here is a brief overview of library with links to the detailed descriptions.
 - `ptls.preprocessing` - transforms data to `ptls`-compatible format with `pandas` or `pyspark`.
 Categorical encoding, datetime transformation, numerical feature preprocessing.
 
-- `ptls.data_load` - all that you need for prepare your data to training and validation.
+- `ptls.data_load` - all you need to prepare your data for training and validation.
     - `ptls.data_load.datasets` - PyTorch `Dataset` API implementation for data access.
     - `ptls.data_load.iterable_processing` - generator-style filters for data transformation.
     - `ptls.data_load.augmentations` - functions for data augmentation.
@@ -19,11 +19,11 @@ CoLES, SimCLR, CPC, VICReg, ...
     - `ptls.frames.coles` - Contrastive leaning on sub-sequences.
     - `ptls.frames.cpc` - Contrastive learning for future event state prediction.
     - `ptls.frames.bert` - methods, inspired by NLP and transformer models.
-    - `ptls.framed.supervised` - modules fo supervised training.
+    - `ptls.framed.supervised` - modules for supervised training.
     - `ptls.frames.inference` - inference module.
 
 - `ptls.nn` - layers for model creation:
-    - `ptls.nn.trx_encoder` - layers to produce the representation for a single transactions.
+    - `ptls.nn.trx_encoder` - layers to produce the representation for a single transaction.
     - `ptls.nn.seq_encoder` - layers for sequence processing, like `RNN` of `Transformer`.
     - `ptls.nn.pb` - `PaddedBatch` compatible layers, similar to `torch.nn` modules, but works with `ptls-data`.
     - `ptls.nn.head` - composite layers for final embedding transformation.

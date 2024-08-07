@@ -28,8 +28,8 @@ class PysparkDataPreprocessor(DataPreprocessor):
     During preprocessing it
         * transforms `cols_event_time` column with date and time
         * encodes category columns `cols_category` into ints;
-        * apply logarithm transformation to `cols_log_norm' columns;
-        * (Optional) select the last `max_trx_count` transactions for each `col_id`;
+        * applies a logarithm transformation to `cols_log_norm' columns;
+        * (Optional) selects the last `max_trx_count` transactions for each `col_id`;
         * groups flat data by `col_id`;
         * arranges data into list of dicts with features
 

@@ -2,11 +2,16 @@
 """
 
 """
+from typing import List
+
 import numpy as np
 
 
 class AbsSplit:
-    def split(self, dates):
+    def split(self, dates) -> List[np.ndarray]:
+        """
+        Returns a list of arrays with indexes of subsequences
+        """
         raise NotImplementedError()
 
 
@@ -89,7 +94,33 @@ class SplitByWeeks(AbsSplit):
 
 
 class SampleSlices(AbsSplit):
-    def __init__(self, split_count, cnt_min, cnt_max, short_seq_crop_rate=1.0, is_sorted=False):
+    """
+    Split into subsequences of adjacent elements (into "slices") 
+    with random length from `cnt_min` to `cnt_max`.
+
+    This splitter lead to the best results 
+    in the [CoLES paper](https://arxiv.org/abs/2002.08232).
+
+    Parameters
+    ----------
+    split_count: int
+        Number of subsequences
+    cnt_min: int
+        Minimum length of a subsequence.
+    cnt_max: int
+        Maximum length of a subsequence. 
+        If the length of the original sequence is less than `cnt_max`, 
+        `cnt_max` will be set to the length of the original sequence.
+    short_seq_crop_rate: float
+        If the length of the original sequence is less than `cnt_min`,
+        `cnt_min` will be set to `short_seq_crop_rate * date_len`.
+    is_sorted: bool
+        If True, the list of subsequences will be sorted by the start position of a subsequence.
+        Otherwise, the order of subsequences will be random (as sampled).
+    """
+
+    def __init__(self, split_count: int, cnt_min: int, cnt_max: int, 
+                 short_seq_crop_rate: float=1.0, is_sorted: bool=False) -> None:
         self.split_count = split_count
         self.cnt_min = cnt_min
         self.cnt_max = cnt_max

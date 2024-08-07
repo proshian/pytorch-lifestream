@@ -71,9 +71,9 @@ class RnnSeqEncoder(SeqEncoderContainer):
     """SeqEncoderContainer with RnnEncoder
 
     Supports incremental embedding calculation.
-    Each RNN step requires previous hidden state. Hidden state passed through the iterations during sequence processing.
-    Starting hidden state required by RNN. Starting hidden state are depends on `RnnEncoder.trainable_starter`.
-    You can also provide starting hidden state to `forward` method as `h_0`.
+    Each RNN step requires previous hidden state. Hidden state is passed through the iterations during sequence processing.
+    Starting hidden state is required by RNN. Starting hidden state depends on `RnnEncoder.trainable_starter`.
+    You can also provide a starting hidden state to `forward` method as `h_0`.
     This can be useful when you need to `update` your embedding with new transactions.
 
     Example:

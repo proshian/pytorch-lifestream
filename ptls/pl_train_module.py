@@ -1,3 +1,31 @@
+"""
+Trains ptls pytorch-lightning model configured by hydra.
+
+
+Hydra config properties:
+------------------
+* pl_module: 
+    The pytorch-lightning model class (to be instantiated by hydra)
+* data_module:
+    The pytorch-lightning datamodule class (to be instantiated by hydra)
+* trainer:
+    The pytorch-lightning trainer parameters
+
+* model_path:
+    The path to save the model weights
+* logger_name:
+    The name of the tensorboard logger (optional)
+* seed_everything:
+    The seed for reproducibility (optional)
+* checkpoints_every_n_val_epochs:
+    Save checkpoints every n validation epochs (optional)
+* use_best_epoch:
+    Save the best model according to the metric (optional)
+        if False, the last model will be saved
+* strategy:
+    The distributed training strategy (optional)
+"""
+
 import logging
 
 import hydra

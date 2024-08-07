@@ -10,11 +10,15 @@ class PaddedBatch:
     """Contains a padded batch of sequences with different lengths.
 
     Parameters:
-        payload:
-            container with data. Format supported:
+    -----------
+        payload: Dict[str, torch.Tensor]
+            Container with data. 
+            Supported formats:
             - dict with features. This is the input data for overall network pipeline.
-                Kees are the feature names, values are (B, T) shape tensors.
-                Long type for categorical features, embedding lookup table indexes expected
+                Keys are the feature names, values are (B, T) shape tensors.
+                Long type for categorical features. 
+                    It's expected that categorical features are represented 
+                    by embedding lookup table indexes.
                 Float type for numerical features.
             - trx embedding tensor. This is the intermediate data for overall network pipeline.
                 shape (B, T, H)
@@ -26,11 +30,12 @@ class PaddedBatch:
             Unused positions padded with zeros
 
     Examples:
+    ---------
         >>> # Dict with features
         >>>
         >>> data = PaddedBatch(
         >>>     payload={
-        >>>         'mcc': torch.tensor([[1, 2, 0, 0], [3, 4, 5, 6]])
+        >>>         'mcc': torch.tensor([[1, 2, 0, 0], [3, 4, 5, 6]]),
         >>>         'amnt': torch.tensor([[90, 50, 0, 0], [40, 10, 55, 70]])
         >>>     },
         >>>     length=torch.Tensor([2, 4])  

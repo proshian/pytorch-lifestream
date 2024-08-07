@@ -1,25 +1,25 @@
 # `ptls.nn.seq_encoder`
 All classes from `ptls.nn.seq_encoder` also available in `ptls.nn`
 
-`ptls.nn.trx_encoder` works with individual transaction.
+`ptls.nn.trx_encoder` works with individual transactions.
 `ptls.nn.seq_encoder` takes into account sequential structure and the links between transactions.
 
 There are 2 types of seq encoders:
 
-- required embeddings as input
-- requires raw features as input
+- requiring embeddings as input
+- requiring raw features as input
 
 ## Embeddings as input
 
 We implement ptls-api for `torch` and `huggingface` sequential layers:
 
-- `ptls.nn.RnnEncoder` for `torch.nn.GRU`
+- `ptls.nn.RnnEncoder` for `torch.nn.GRU` and `torch.nn.LSTM` (default is gru) 
 - `ptls.nn.TransformerEncoder` for `torch.nn.TransformerEncoder`
 - `ptls.nn.LongformerEncoder` for `transformers.LongformerModel`
 
 They expect vectorized input, which can be obtained with `TrxEncoder`.
 
-Output format controlled by `is_reduce_sequence` property. `True` means that sequence will be reduced 
+The output format is controlled by `is_reduce_sequence` property. `True` means that sequence will be reduced 
 to one single vector.  It's last hidden state for RNN and CLS token output for transformer.
 `False` means than all hidden vectors for all transactions will be returned.  Set this property based on your needs.
 It's possible to set it during encoder initialisation. It's possible to change it in runtime.

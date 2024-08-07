@@ -2,16 +2,16 @@
 
 Original paper: [CoLES: Contrastive Learning for Event Sequences with Self-Supervision](https://dl.acm.org/doi/10.1145/3514221.3526129)
 
-CoLES is a framework that learn neural network to compress sequential data into a single embedding.
+CoLES is a framework that trains a neural network to compress sequential data into a single embedding.
 
-Imagine a credit card transaction history that can be an example of user behavioral.
+Imagine a credit card transaction history that can be an example of user behavior.
 Each user has his own behavioral patterns which are projected to his transaction history.
 Repeatability of behavioral patterns leads to repeatability in transaction history.
 
-CoLES exploit repeatability of patterns to make embedding. It samples a few subsequences from original sequence
+CoLES exploits repeatability of patterns to make embedding. It samples a few subsequences from an original sequence
 and calculates an embeddings for each of them. Embeddings are assigned to a corresponding user.
 Subsequences represent the same user and contain the same behavioral patterns. 
-CoLES catch these patterns by making closer users embeddings. It also tries to distance different users embeddings.
+CoLES catches these patterns by making closer users embeddings. It also tries to distance different users embeddings.
 
 Subsequences represent also original sequence, and the similarity of behavioral patterns 
 allows the similarity of embeddings for original sequence and his subsequence.
@@ -20,7 +20,7 @@ allows the similarity of embeddings for original sequence and his subsequence.
 
 - more 'global' representation of sequence
 - embedding for each transaction is an internal state of `seq_encoder`
-- embedding for all sequence is an output of `seq_encoder`
+- embedding for a whole sequence is an output of `seq_encoder`
 
 ## CoLESModule
 `ptls.frames.coles.CoLESModule` is a `LightningModule` with CoLES framework.

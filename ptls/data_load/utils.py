@@ -1,3 +1,5 @@
+from typing import List, Dict
+
 import numpy as np
 import torch
 from collections import defaultdict
@@ -9,7 +11,7 @@ from ptls.data_load.padded_batch import PaddedBatch
 from transformers.tokenization_utils_base import BatchEncoding
 
 
-def collate_feature_dict(batch):
+def collate_feature_dict(batch: List[Dict[str, np.ndarray]]) -> PaddedBatch:
     """Collate feature with arrays to padded batch
 
     Check feature consistency. Keys for all batch samples should be the same.
@@ -21,7 +23,7 @@ def collate_feature_dict(batch):
         list with feature dicts
     Returns
     -------
-        PaddedBatch
+    PaddedBatch 
     """
     new_x_ = defaultdict(list)
     for i, x in enumerate(batch):
@@ -29,7 +31,7 @@ def collate_feature_dict(batch):
             new_x_[k].append(v)
         assert reduce(
             lambda a, b: ((a[1] is not None and a[1] == b or a[1] is None) and a[0], b),
-            map(len, new_x_.values()), (True, None))[0]
+            map(len, new_x_.values()), (True, None))[0], f'Feature length mismatch in {i}-th sample'
 
     seq_col = next(k for k, v in batch[0].items() if FeatureDict.is_seq_feature(k, v))
     lengths = torch.LongTensor([len(rec[seq_col]) for rec in batch])

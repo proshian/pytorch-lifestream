@@ -39,7 +39,7 @@ tensor([[1, 1, 0, 0, 0, 0, 0, 0],
 ```
 There are 2, 8 and 5 valid tokens in lines.
 
-More way of `seq_len_mask` usage are in `PaddedBatch` docstring.
+More ways of `seq_len_mask` usage are in `PaddedBatch` docstring.
 
 We can recreate our `x` with modified content:
 ```python
@@ -58,6 +58,13 @@ tensor([[8, 1, 0, 0, 0, 0, 0, 0],
 All invalid tokens are replaced with zeros.
 
 Generally, all layers respect `PaddedBatch.seq_lens` and no explicit zeroing of padded characters is required.
+
+
+Note that `payload` property of a `PaddedBatch` can be of different types:
+* dict with features
+* trx embedding torch tensor of shape (B, T, H)
+* feature tensor of shape (B, H)
+
 
 ## Classes
 See docstrings for classes:

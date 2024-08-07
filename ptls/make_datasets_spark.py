@@ -189,6 +189,7 @@ class DatasetConverter:
         df = df.withColumnRenamed(col_name, col_orig)
 
         df = df.join(df_encoder, on=col_orig, how='left')
+        # Replace all null values in column with name `col_name` with `1`.
         df = df.withColumn(col_name, F.coalesce(F.col(col_name), F.lit(1)))
         df = df.drop(col_orig)
 
