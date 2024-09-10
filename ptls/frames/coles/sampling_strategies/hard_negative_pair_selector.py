@@ -17,6 +17,9 @@ class HardNegativePairSelector(PairSelector):
     def get_pairs(self, embeddings, labels):
         # construct matrix x, such as x_ij == 0 <==> labels[i] == labels[j]
         n = labels.size(0)
+        if self.neg_count > n:
+            print(f"Warning! self.neg_count > n. self.neg_count = {self.neg_count}, n = {n}")
+            
         x = labels.expand(n, n) - labels.expand(n, n).t()
 
         # positive pairs
@@ -29,6 +32,7 @@ class HardNegativePairSelector(PairSelector):
         mat_distances = ((upper_bound - mat_distances) * (x != 0).type(
             mat_distances.dtype))  # filter: get only negative pairs
 
+        neg_count = max(self.neg_count, n)
         values, indices = mat_distances.topk(k=self.neg_count, dim=0, largest=True)
         negative_pairs = torch.stack([
             torch.arange(0, n, dtype=indices.dtype, device=indices.device).repeat(self.neg_count),
